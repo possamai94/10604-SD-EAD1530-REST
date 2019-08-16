@@ -16,6 +16,7 @@ type
     function calcularTempoPreparo(const APizzaTamanho: TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum): Integer;
   public
     function efetuarPedido(const APizzaTamanho: TPizzaTamanhoEnum; const APizzaSabor: TPizzaSaborEnum; const ADocumentoCliente: String): TPedidoRetornoDTO;
+    function consultarPedido(const ADocumentoCliente: string): TPedidoRetornoDTO;
 
     constructor Create; reintroduce;
   end;
@@ -54,6 +55,20 @@ begin
     enGrande:
       Result := 40;
   end;
+end;
+
+function TPedidoService.consultarPedido(
+  const ADocumentoCliente: string): TPedidoRetornoDTO;
+var
+  Pedido: TDadosPedido;
+begin
+  FPedidoRepository.consultarPedido(ADocumentoCliente, Pedido);
+  if Pedido.PedidoDocumentoCliente = EmptyStr then
+    raise Exception.Create('Não foi encontrado Pedido´para o Cliente do Documento infomado.');
+  Result := TPedidoRetornoDTO.Create(Pedido.PizzaTamanho
+                                    ,Pedido.PizzaSabor
+                                    ,Pedido.PedidoValor
+                                    ,Pedido.PedidoTempoPreparo);
 end;
 
 constructor TPedidoService.Create;

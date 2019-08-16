@@ -19,7 +19,9 @@ type
     mmRetornoWebService: TMemo;
     edtEnderecoBackend: TLabeledEdit;
     edtPortaBackend: TLabeledEdit;
+    btn_Consultar: TButton;
     procedure Button1Click(Sender: TObject);
+    procedure btn_ConsultarClick(Sender: TObject);
   private
     { Private-Deklarationen }
   public
@@ -33,9 +35,32 @@ implementation
 
 uses
   Rest.JSON, MVCFramework.RESTClient, UEfetuarPedidoDTOImpl, System.Rtti,
-  UPizzaSaborEnum, UPizzaTamanhoEnum;
+  UPizzaSaborEnum, UPizzaTamanhoEnum, UPedidoRetornoDTOImpl;
 
 {$R *.dfm}
+
+procedure TForm1.btn_ConsultarClick(Sender: TObject);
+var
+  rCli: TRestClient;
+  oPedidoDTO: TPedidoRetornoDTO;
+begin
+  rCli := MVCFramework.RESTClient.TRestClient.Create(edtEnderecoBackend.Text, StrToIntDef(edtPortaBackend.Text, 80), nil);
+  try
+    oPedidoDTO:= TJson.JsonToObject<TPedidoRetornoDTO>(rCli.doGET('/consultarPedido', [edtDocumentoCliente.Text],nil).BodyAsString);
+    try
+      mmRetornoWebService.Clear;
+      mmRetornoWebService.Lines.Add(' PEDIDO');
+      mmRetornoWebService.Lines.Add(' Pizza: ');
+      mmRetornoWebService.Lines.Add(' Tamanho: '+getNomePizzaTamanhoEnum(oPedidoDTO.PizzaTamanho) + '; Sabor: '+getNomePizzaSaborEnum(oPedidoDTO.PizzaSabor) +';');
+      mmRetornoWebService.Lines.Add(' Valor Total: '+ FormatCurr('R$ 0.00',oPedidoDTO.ValorTotalPedido));
+      mmRetornoWebService.Lines.Add(' Tempo de Preparo: '+ oPedidoDTO.TempoPreparo.ToString + ' minutos.');
+    finally
+      oPedidoDTO.Free;
+    end;
+  finally
+    rCli.Free;
+  end;
+end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 var

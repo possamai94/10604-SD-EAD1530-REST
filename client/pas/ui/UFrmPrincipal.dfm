@@ -67,8 +67,8 @@ object Form1: TForm1
       'enPortuguesa')
   end
   object Button1: TButton
-    Left = 104
-    Top = 217
+    Left = 16
+    Top = 223
     Width = 105
     Height = 25
     Caption = '&1 - Fazer Pedido'
@@ -105,5 +105,14 @@ object Form1: TForm1
     EditLabel.Caption = 'Porta Pizzaria Backend:'
     TabOrder = 6
     Text = '8080'
+  end
+  object btn_Consultar: TButton
+    Left = 192
+    Top = 223
+    Width = 105
+    Height = 25
+    Caption = '&2 - Consultar Pedido'
+    TabOrder = 7
+    OnClick = btn_ConsultarClick
   end
 end
